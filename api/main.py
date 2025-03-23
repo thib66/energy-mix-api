@@ -1,13 +1,14 @@
 from fastapi import FastAPI
-from keras.models import load_model
+#from keras.models import load_model
+from keras.src.legacy.saving import legacy_h5_format
 #import tensorflow as tf 
 #from tensorflow import keras
 from api.gcp import gcp_load_model, gcp_load_data
-from data_preprocessing import (
+from api.data_preprocessing import (
     load_data, preprocess_data, create_sequences,
     TARGETS, SEQUENCE_LENGTH
     )
-from utils import (
+from api.utils import (
     get_predictions_per_target_dict, 
     format_predictions_json, 
     get_real_values_per_target_dict
@@ -17,15 +18,15 @@ app=FastAPI()
 
 print("test_keras")
 local_filename = gcp_load_model()
-app.state.model = load_model(local_filename)
-print('HAHA', type(app.state.model))
+#app.state.model = load_model(local_filename)
 
+app.state.model = legacy_h5_format.load_model_from_hdf5(local_filename,custom_objects={
+        "mse":"mse",
+        })
 
 local_filename = gcp_load_data()
-print(local_filename)
 
-df = load_data(local_filename)
-print(type(df))
+df = load_data()
 
 df, features = preprocess_data(df)
 train_size = int(0.7 * len(df))

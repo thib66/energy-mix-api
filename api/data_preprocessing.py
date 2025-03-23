@@ -1,28 +1,30 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import RobustScaler
-
+import warnings
+warnings.filterwarnings("ignore")
 TARGETS = ["thermique", "nucleaire", "eolien", "solaire", "hydraulique", "bioenergies"]
 LAGS = [1, 2, 4, 8, 56]
 SEQUENCE_LENGTH = 168  # 7 jours
+
 
 
 # Chargement des données
 def load_data():
     file_name="dataset_final.csv"
 
-    df = pd.read_csv(file_name, parse_dates=["datetime"])
+    df = pd.read_csv(file_name, parse_dates=["date_time"])
 
     # 🛠 Remplacement des valeurs manquantes par interpolation linéaire
     df["vitesse_vent"] = df["vitesse_vent"].interpolate(method="linear")
     df["temperature"] = df["temperature"].interpolate(method="linear")
 
     # Extraction des features temporelles
-    df["hour"] = df["datetime"].dt.hour
-    df["day_of_week"] = df["datetime"].dt.weekday
-    df["month"] = df["datetime"].dt.month
-    df["day_of_year"] = df["datetime"].dt.dayofyear
-    df["week_of_year"] = df["datetime"].dt.isocalendar().week
+    df["hour"] = df["date_time"].dt.hour
+    df["day_of_week"] = df["date_time"].dt.weekday
+    df["month"] = df["date_time"].dt.month
+    df["day_of_year"] = df["date_time"].dt.dayofyear
+    df["week_of_year"] = df["date_time"].dt.isocalendar().week
 
     # Encodage sinusoïdal des variables temporelles
     df["sin_hour"] = np.sin(2 * np.pi * df["hour"] / 24)
@@ -37,7 +39,7 @@ def load_data():
     df.drop(columns=columns_to_drop, inplace=True, errors='ignore')
 
     # Mise en index et rééchantillonnage
-    df.set_index('datetime', inplace=True)
+    df.set_index('date_time', inplace=True)
     df = df.resample("3h").mean()
 
     return df

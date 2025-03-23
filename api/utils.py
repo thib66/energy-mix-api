@@ -1,4 +1,4 @@
-from data_preprocessing import normalize_data
+from api.data_preprocessing import normalize_data
 TARGETS = ["thermique", "nucleaire", "eolien", "solaire", "hydraulique", "bioenergies"]
 
 
@@ -18,7 +18,8 @@ def get_predictions_per_target_dict(model, X_test, df, features, n_days=50):
     """
     _, _, scaler_y = normalize_data(df.copy(), features)
     n_steps = n_days * 8
-    y_pred = model.predict(X_test, verbose=0)
+    #y_pred = model.predict(X_test, verbose=0)
+    y_pred = model.predict(X_test[:, :, :-11], verbose=0)
     y_pred_real = scaler_y.inverse_transform(y_pred)
     y_pred_real = y_pred_real[:n_steps]
     prediction_dict = {target: y_pred_real[:, i].tolist() for i, target in enumerate(TARGETS)}
