@@ -1,4 +1,5 @@
 from api.data_preprocessing import normalize_data
+from api.data_preprocessing import normalize_data
 TARGETS = ["thermique", "nucleaire", "eolien", "solaire", "hydraulique", "bioenergies"]
 
 

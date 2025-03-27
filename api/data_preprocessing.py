@@ -3,6 +3,8 @@ import numpy as np
 from sklearn.preprocessing import RobustScaler
 import warnings
 warnings.filterwarnings("ignore")
+import warnings
+warnings.filterwarnings("ignore")
 
 TARGETS = ["thermique", "nucleaire", "eolien", "solaire", "hydraulique", "bioenergies"]
 LAGS = [1, 2, 4, 8, 56]
